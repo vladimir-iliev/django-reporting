@@ -4,10 +4,12 @@ from base import Report
 
 
 _registry = {}
+_names = {}
 
 def register(slug, klass):
     _registry[slug] = klass
-
+    _names[slug] = klass.verbose_name
+    
 def get_report(slug):
     try:
         return _registry[slug]
@@ -16,6 +18,9 @@ def get_report(slug):
 
 def all_reports():
     return _registry.items()
+
+def all_reports_names():
+    return _names.items()
 
 
 def autodiscover():

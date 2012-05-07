@@ -27,7 +27,7 @@
 
 		<H2>Reports</H2>
       
-      <div id="changelist"
+      <div id="changelist">
 			{% for slug, report in reports %}
 				<a href="{% url reporting-view slug %}">{{report.verbose_name}}</a><br>
 			{% endfor %}

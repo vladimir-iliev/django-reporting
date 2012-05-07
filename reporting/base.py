@@ -67,13 +67,14 @@ class Report(object):
         admin_mock = ModelAdminMock(self.model)
         
         self.annotate, self.annotate_titles = self.split_annotate_titles(self.annotate)
-        self.aggregate, self.aggregate_titles = self.split_annotate_titles(self.aggregate)
+        self.aggregate, self.aggregate_titles = self.split_annotate_titles(self.aggregate)      
         self.group_by, self.group_by_titles = self.split_titles(self.group_by)
         if self.detail_list_display and not hasattr(self, 'detail_link_fields'):
             self.detail_link_fields = [self.detail_list_display[0]]
         
         self.params = dict(self.request.GET.items())
         self.selected_group_by = self.get_group_by_field()
+        #self.selected_group_by = self.selected_group_by.split('/')
         self.sort_by = int(self.params.get(SORT_VAR, '0'))
         self.show_details = self.params.get(DETAILS_SWITCH_VAR) is not None
         self.sort_type = self.params.get(SORTTYPE_VAR, 'asc')
@@ -90,13 +91,22 @@ class Report(object):
         for field, func in self.annotate:
             annotate_args[field] = func(field)
         
-        values = [self.selected_group_by]
+        values = self.selected_group_by.split(',')
+        
+        #values = [self.selected_group_by]
         
         rows = qs.values(*values).annotate(**annotate_args).order_by(values[0])
         
         self.results = []
         for row in rows:
-            row_vals = [self.get_value(row, self.selected_group_by)]
+            columns = self.selected_group_by.split(',')
+            count_cols = 0
+            for col in columns:
+                if count_cols == 0:
+                    row_vals = [self.get_value(row, col)]
+                else:
+                    row_vals.append(self.get_value(row, col))
+                count_cols = count_cols + 1
             for field, func in self.annotate:
                 row_vals.append(row[field])
             details = None
@@ -155,12 +165,22 @@ class Report(object):
         return value
     
     def get_headers(self):
-        output = [Header(self, 0, self.get_lookup_title(self.selected_group_by))]
-        ind = 1
-        for title in self.annotate_titles:
-            output.append(Header(self, ind, title))
-            ind += 1
-        return output
+        try:
+            count_cols = 0
+            more_than_one = self.selected_group_by.split(',')
+            for final_col in more_than_one:                    
+                if count_cols == 0:
+                    output = [Header(self, 0, self.get_lookup_title(final_col))]
+                else:
+                    output.append(Header(self, 0, self.get_lookup_title(final_col)))
+                count_cols = count_cols + 1
+            ind = 1
+            for title in self.annotate_titles:
+                output.append(Header(self, ind, title))
+                ind += 1
+            return output
+        except Exception,e:
+            raise e
     
     def header_count(self):
         return len(self.annotate) + 1#+1 group by
@@ -236,9 +256,18 @@ class Report(object):
     
 
     def get_details(self, row):
-        val = row[self.selected_group_by]
-        key = str(self.selected_group_by)
-        queryset = self.get_queryset().filter(**{key: val})
+        more_than_one = self.selected_group_by.split(',')
+        count_col = 0
+        for final_col in more_than_one:
+            val = row[final_col]
+            key = str(final_col)
+            if count_col == 0:
+                queryset = self.get_queryset().filter(**{key: val})
+            else:
+                queryset = queryset.filter(**{key: val})
+            count_col = count_col + 1
+            
+        
         output = []
         for obj in queryset:
             item = []
@@ -251,9 +280,9 @@ class Report(object):
                         value = value(obj)
                 else:
                     raise Exception("Couldnot resove '%s' into value" % attr)
-                if attr in self.detail_link_fields:
-                    value = mark_safe('<a href="%s">%s</a>' % 
-                                      (self.details_url(obj), escape(value)))
+                #if attr in self.detail_link_fields:
+                #    value = mark_safe('<a href="%s">%s</a>' % 
+                #                      (self.details_url(obj), escape(value)))
                 item.append(value)
             output.append(item)
         return output
@@ -303,14 +332,33 @@ class Report(object):
     
     def split_titles(self, items):
         data, titles = [], {}
-        for item in items:
-            if not isinstance(item, (list, tuple)):
-                data.append(item)
-                titles[item] = self.get_lookup_title(item)
+        to_assert = False
+        for tuple_items in items:
+            if type(tuple_items) is not tuple:
+                t_items = (tuple_items,)
             else:
-                assert len(item) == 2
-                data.append(item[0])
-                titles[item[0]] = item[1]
+                t_items = tuple_items
+            counter = 0
+            to_data = ''
+            to_title = ''            
+            for item in t_items:
+                if not isinstance(item, (list, tuple)):
+                    title = self.get_lookup_title(item)
+                    if counter == 0:
+                        to_data = item
+                        to_title =  title
+                    else:
+                        to_data = to_data + ',' + item
+                        to_title = to_title  + ',' + title
+                    counter = counter +1                        
+                else:
+                    to_assert = True
+                    assert len(item) == 2
+                    data.append(item[0])
+                    titles[item[0]] = item[1]
+            if to_assert == False:
+                data.append(to_data)
+                titles[to_data] = to_title
         return data, titles
                 
        
