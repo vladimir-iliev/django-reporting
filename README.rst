@@ -19,7 +19,8 @@ settings.py ::
     INSTALLED_APPS = (
         [...]
         'reporting',
-        'django.contrib.admin', # admin has to go before reporting in order to have links to the reports on the admin site
+        'django.contrib.admin', # admin has to go before reporting in order to have links to the reports
+                                # on the admin site
     )
 
 urls.py ::
@@ -51,12 +52,12 @@ models.py ::
         [...]
     
     class Person(models.Model):
-        name = models.CharField(max_length=255)                         # we won't use it in a summary report
-        occupation = models.ForeignKey(Occupation)                      # we'll be able to group and to filter by both occupation and country
-        department = models.ForeignKey(Department)                      # we'll be able to group and to filter by department and it leader
+        name = models.CharField(max_length=255)                         
+        occupation = models.ForeignKey(Occupation)                      
+        department = models.ForeignKey(Department)
         country = models.ForeignKey(Country)
-        birth_date = models.DateField()                                 # we'll be able to filter by year
-        salary = models.DecimalField(max_digits=16, decimal_places=2)   # we'll sum and calculate average for salary and expenses 
+        birth_date = models.DateField()                                
+        salary = models.DecimalField(max_digits=16, decimal_places=2)   
         expenses = models.DecimalField(max_digits=16, decimal_places=2)
 
 
@@ -83,7 +84,7 @@ reports.py::
         )
         group_by = [                   # list of fields and lookups for group-by options
             'department',
-            ('department','occupation'), # If a list is defined would group by all fields in the list
+            ('department','occupation'), # If a tupple is defined would group by all fields in the tupple
             'department__leader', 
             'occupation', 
         ]
@@ -92,7 +93,7 @@ reports.py::
            'country',
         ]
         
-        detail_list_display = [        # if detail_list_display is defined user will be able to see how rows was grouped  
+        detail_list_display = [  # if detail_list_display is defined user will be able to see how rows was grouped  
             'name', 
             'salary',
             'expenses', 
