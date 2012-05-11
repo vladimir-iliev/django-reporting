@@ -93,7 +93,8 @@ reports.py::
            'country',
         ]
         
-        detail_list_display = [  # if detail_list_display is defined user will be able to see how rows was grouped  
+        # if detail_list_display is defined user will be able to see how rows was grouped  
+        detail_list_display = [  
             'name', 
             'salary',
             'expenses', 
