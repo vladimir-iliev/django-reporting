@@ -16,8 +16,21 @@ New Features
 Installation
 -------------
 
-Clone repository and add to a existing Django Project.
+Clone repository and do:
 
+    python setup.py install
+
+Or just do
+
+    pip install django-reporting
+
+to get the latest version from `pypi <http://pypi.python.org/pypi/django-reporting>`_.
+
+
+How to use it
+-------------
+
+Add to INSTALLED_APPS in an existing django project:
 
 settings.py ::
 
@@ -28,8 +41,6 @@ settings.py ::
                                 # on the admin site
     )
 
-How to use it
--------------
 
 urls.py ::
 
@@ -114,4 +125,4 @@ reports.py::
     
     reporting.register('people', PersonReport) # Do not forget to 'register' your class in reports
 
-For more details see a 'samples' projects inside repository
+For more details see a 'samples' projects inside the repository.
