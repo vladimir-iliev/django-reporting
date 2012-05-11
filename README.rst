@@ -1,27 +1,23 @@
-------------
 Introduction
 ------------
 
-Django Reporting System allows you to create dynamic reports for your models, consolidating and aggregating data, filtering and sorting it.
-We have add to the original Django Reporting the possibility of group by more than one field at a time.
-Also now it's possible to export your reports to a CSV file using the link "get CSV" in the section "Download".
+Django Reporting is an application that can be integrated with the Django Admin and allows you to create dynamic reports for your models. 
+Consolidating and aggregating data, filtering and sorting it.
 
-*Now also work with Django 1.3.*
 
-------------
 New Features
 ------------
 
 * Django 1.3 Support.
-* Group by more than one field, using tupples.
+* Group by more than one field, using tuples.
 * Export report data in a CSV file.
 
 
--------------
-HOW TO USE IT
+Installation
 -------------
 
-Add to exiting django project.
+Clone repository and add to a existing Django Project.
+
 
 settings.py ::
 
@@ -31,6 +27,9 @@ settings.py ::
         'django.contrib.admin', # admin has to go before reporting in order to have links to the reports
                                 # on the admin site
     )
+
+How to use it
+-------------
 
 urls.py ::
 
@@ -47,10 +46,11 @@ urls.py ::
         (r'^reporting/', include('reporting.urls')),
     )
 
-for more details see a 'samples' directory inside repository
 
 Configure report
-Let's say you have the follwing schema:
+================
+
+Let's say you have the following schema:
 
 models.py ::
 
@@ -70,7 +70,7 @@ models.py ::
         expenses = models.DecimalField(max_digits=16, decimal_places=2)
 
 
-in your application create a reports.py
+In your application create a reports.py
 
 reports.py::
 
@@ -113,4 +113,5 @@ reports.py::
     
     
     reporting.register('people', PersonReport) # Do not forget to 'register' your class in reports
-for more details see a 'samples' projects inside repository
+
+For more details see a 'samples' projects inside repository
