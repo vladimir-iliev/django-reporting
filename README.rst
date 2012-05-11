@@ -44,6 +44,7 @@ Configure report
 Let's say you have the follwing schema:
 
 models.py:
+==========
 
 class Department(models.Model):
     [...]
@@ -64,6 +65,7 @@ class Person(models.Model):
 in your application create a reports.py
 
 reports.py:
+===========
 
 import reporting
 from django.db.models import Sum, Avg, Count
