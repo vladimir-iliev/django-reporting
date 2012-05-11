@@ -18,9 +18,9 @@ settings.py
 ===========
 
 INSTALLED_APPS = (
-    [...]
-    'reporting',
-    'django.contrib.admin', # admin has to go before reporting in order to have links to the reports on the admin site
+[...]
+'reporting',
+'django.contrib.admin', # admin has to go before reporting in order to have links to the reports on the admin site
 )
 
 urls.py
