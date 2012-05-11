@@ -1,4 +1,6 @@
+------------
 Introduction
+------------
 
 Django Reporting System allows you to create dynamic reports for your models, consolidating and aggregating data, filtering and sorting it.
 We have add to the original Django Reporting the possibility of group by more than one field at a time.
@@ -6,11 +8,14 @@ Also now it's possible to export your reports to a CSV file using the link "get 
 
 Now also work with Django 1.3.
 
-HOW TO USE IT.
+-------------
+HOW TO USE IT
+-------------
 
 Add to exiting django project
 
 settings.py
+===========
 
 INSTALLED_APPS = (
     [...]
@@ -19,6 +24,7 @@ INSTALLED_APPS = (
   )
 
 urls.py
+=======
 
 from django.conf.urls.defaults import *
 from django.contrib import admin
