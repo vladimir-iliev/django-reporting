@@ -6,13 +6,22 @@ Django Reporting System allows you to create dynamic reports for your models, co
 We have add to the original Django Reporting the possibility of group by more than one field at a time.
 Also now it's possible to export your reports to a CSV file using the link "get CSV" in the section "Download".
 
-Now also work with Django 1.3.
+*Now also work with Django 1.3.*
+
+------------
+New Features
+------------
+
+* Django 1.3 Support.
+* Group by more than one field, using tupples.
+* Export report data in a CSV file.
+
 
 -------------
 HOW TO USE IT
 -------------
 
-Add to exiting django project
+Add to exiting django project.
 
 settings.py ::
 
