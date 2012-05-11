@@ -14,17 +14,16 @@ HOW TO USE IT
 
 Add to exiting django project
 
-settings.py
-===========
+settings.py ::
 
-INSTALLED_APPS = (
-[...]
-'reporting',
-'django.contrib.admin', # admin has to go before reporting in order to have links to the reports on the admin site
-)
+    INSTALLED_APPS = (
+        [...]
+        'reporting',
+        'django.contrib.admin', # admin has to go before reporting in order to have links to the reports on the admin site
+    )
 
 urls.py
-=======
+
 
 from django.conf.urls.defaults import *
 from django.contrib import admin
