@@ -6,12 +6,13 @@ Django Reporting is an application that can be integrated with the Django Admin 
 It is able to consolidate and aggregate data, filter and sort it.
 
 
-New Features
+New features
 ============
 
 * Django 1.3 support.
 * Group by more than one field, using tuples.
 * Export report data in a CSV file.
+* Generate jqPlot pie or bar charts from report's columns.
 
 
 Installation
