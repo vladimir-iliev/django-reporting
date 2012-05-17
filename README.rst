@@ -127,6 +127,8 @@ reports.py::
     
     reporting.register('people', PersonReport) # Do not forget to 'register' your class in reports
 
+Add an import of the reports.py in the __init__ of your application.
+
 For more details see a 'samples' projects inside the repository.
 
 
