@@ -73,6 +73,12 @@ class Report(object):
             self.detail_link_fields = [self.detail_list_display[0]]
         
         self.params = dict(self.request.GET.items())
+        if self.params.has_key('type_of_plot'):
+            self.params.pop('type_of_plot')
+        if self.params.has_key('x_axis'):
+            self.params.pop('x_axis')
+        if self.params.has_key('y_axis'):
+            self.params.pop('y_axis')
         self.selected_group_by = self.get_group_by_field()
         #self.selected_group_by = self.selected_group_by.split('/')
         self.sort_by = int(self.params.get(SORT_VAR, '0'))
@@ -315,7 +321,7 @@ class Report(object):
             if '__' not in lookup and not hasattr(self, lookup):
                 raise
             parts = lookup.split('__')
-            return ', '.join([capfirst(i.replace('_', ' ')) for i in parts])
+            return ' - '.join([capfirst(i.replace('_', ' ')) for i in parts])
     
     def split_annotate_titles(self, items):
         data, titles = [], []

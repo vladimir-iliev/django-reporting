@@ -2,13 +2,14 @@ import imp
 from base import Report
 
 
-
-_registry = {}
-_names = {}
+if '_registry' not in locals() or '_registry' not in globals():
+    _registry = {}
+    _names = {}
 
 def register(slug, klass):
     _registry[slug] = klass
     _names[slug] = klass.verbose_name
+    #pass
     
 def get_report(slug):
     try:

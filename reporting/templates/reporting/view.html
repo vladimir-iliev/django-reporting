@@ -5,6 +5,25 @@
   <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/changelists.css" />
 {% endblock %}
 
+{% block extrahead %}
+    <script src="{{STATIC_URL}}jqplot/jquery.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+    	function see_plot(){
+    		type = $('#type_of_plot').val();
+    		x = $('#x_axis').val();
+    		y = $('#y_axis').val();
+    		to_add = "";
+    		if ("{{for_csv|safe}}".length == 0){
+    			to_add_href = "type_of_plot="+type+"&x_axis="+x+"&y_axis="+y; 
+    		}else{
+    			to_add_href = "&type_of_plot="+type+"&x_axis="+x+"&y_axis="+y;
+    		}
+    		window.location.href = "plot/?{{for_csv|safe}}"+to_add_href;
+    	}
+    </script>
+    
+{% endblock%}
 
 {% block bodyclass %}change-list{% endblock %}
 
@@ -31,12 +50,52 @@
 		
 		
 		      {% block filters %}
-		        {% if report.has_filters %}
 				    <div id="changelist-filter">
 				      <h2>Download</h2>
 				      <ul>
 				      	<li>
 				      		<a href="csv/?{{for_csv}}">Get CSV</a>
+				      	</li>
+				      </ul>
+				      <h2>Chart</h2>
+				      <ul>
+				      	<li>
+				      		<label for="type_of_plot"> Select a type of chart:</label>
+				      		<select id="type_of_plot">
+				      			<option value="pie_chart">Pie Chart</option>
+				      			<option value="bar_plot">Bar Chart</option>
+				      		</select>
+				      	</li>
+				      	<li>
+				      		<label for="x_axis">x-axis:</label>
+				      		<select id="x_axis">
+					      		{% if not report.show_details %}
+						      		{% for head in report.get_headers %}
+						      			<option value="{{head.text}}">{{head.text}}</option>
+						      		{% endfor %}
+					      		{% else%}
+						      		{% for head in report.get_details_headers %}
+						      			<option value="{{head}}">{{head}}</option>
+						      		{% endfor %}				      		
+					      		{% endif%}
+				      		</select>
+				      	</li>
+				      	<li>
+				      		<label for="y_axis">y-axis:</label>
+				      		<select id="y_axis">
+					      		{% if not report.show_details %}
+						      		{% for head in report.get_headers %}
+						      			<option value="{{head.text}}">{{head.text}} </option>
+						      		{% endfor %}
+					      		{% else%}
+						      		{% for head in report.get_details_headers %}
+						      			<option value="{{head}}">{{head}}</option>
+						      		{% endfor %}				      		
+					      		{% endif%}				      		
+				      		</select>				      	
+				      	</li>				      	
+				      	<li>
+				      		<a href="#" onclick="see_plot();">See Plot</a>
 				      	</li>
 				      </ul>
 				      {% if report.detail_list_display %}
@@ -49,10 +108,11 @@
 				      		<li{% if selected %} class="selected"{% endif %}><a href="{{url}}">{{name}}</a></li>
 				      {% endfor %}
 				      </ul>
+					{% if report.has_filters %}
 				      <h2>{% trans 'Filter' %}</h2>
-				      {% for spec in report.filter_specs %}{% admin_list_filter report spec %}{% endfor %}
-				    </div>
-				{% endif %}
+				      	{% for spec in report.filter_specs %}{% admin_list_filter report spec %}{% endfor %}
+				    {% endif %}
+				    </div>				
 		      {% endblock %}
 		      
 		

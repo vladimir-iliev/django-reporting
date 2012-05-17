@@ -4,6 +4,7 @@ from django.http import HttpResponse
 import reporting
 from datetime import date
 import csv
+import decimal
 
 def report_list(request):
     reports = reporting.all_reports_names()
@@ -82,3 +83,43 @@ def get_csv(request,slug):
     writer.writerow(row_csv)
                     
     return response
+
+def see_plot(request,slug):
+    for_csv = slug + '/' + 'csv/?'
+    count_params = 0
+    for key,value in request.REQUEST.iteritems():
+        if count_params == 0:
+            if key != 'type_of_plot' and key != 'x_axis' and key != 'y_axis':
+                for_csv = for_csv + key + '=' + value
+        else:
+            if key != 'type_of_plot' and key != 'x_axis' and key != 'y_axis':
+                for_csv = for_csv + '&' + key + '=' + value
+            
+    report = reporting.get_report(slug)(request)
+    x_index = 0
+    y_index = 0
+    data_to_plot = []
+    if report.show_details:
+        headers = report.get_details_headers()
+        x_index = headers.index('x_axis')
+        y_index = headers.index('y_axis')
+    else:     
+        headers = report.get_headers()
+        header_tittles =[]
+        for header in headers:
+            header_tittles.append(header.text)
+        x_index = header_tittles.index(request.GET.get('x_axis'))
+        y_index = header_tittles.index(request.GET.get('y_axis'))
+        for row in report.results:
+            new_row = []
+            new_row.append(str(row['values'][x_index]))
+            if isinstance(row['values'][y_index],decimal.Decimal):
+                y_value = float(row['values'][y_index])
+            else:
+                y_value = row['values'][y_index]
+            new_row.append(y_value)
+            data_to_plot.append(new_row)
+        
+    data = {'report': report, 'title':report.verbose_name, 'for_csv':for_csv, 'slug':slug,'data_to_plot':data_to_plot,'type_of_plot':request.GET.get('type_of_plot')}
+    return render_to_response('reporting/plot.html', data, 
+                              context_instance=RequestContext(request))
