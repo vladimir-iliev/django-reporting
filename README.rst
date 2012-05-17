@@ -133,8 +133,8 @@ For more details see a 'samples' projects inside the repository.
 More information
 ================
 
-:Date: 11-05-2012
-:Version: 0.1
+:Date: 05-17-2012
+:Version: 0.2
 :Authors:
   - Rodrigo Herrera - Tryolabs <rodrigo@tryolabs.com>
   - Vitaliy Kucheryaviy <vitaly@gmail.com> (Jan 2010)
