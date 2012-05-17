@@ -1,20 +1,21 @@
-Introduction
-------------
+------------------
+ django-reporting
+------------------
 
-Django Reporting is an application that can be integrated with the Django Admin and allows you to create dynamic reports for your models. 
-Consolidating and aggregating data, filtering and sorting it.
+Django Reporting is an application that can be integrated with the Django Admin and allows you to create dynamic reports for your models.
+It is able to consolidate and aggregate data, filter and sort it.
 
 
 New Features
-------------
+============
 
-* Django 1.3 Support.
+* Django 1.3 support.
 * Group by more than one field, using tuples.
 * Export report data in a CSV file.
 
 
 Installation
--------------
+============
 
 Clone repository and do:
 
@@ -28,7 +29,7 @@ to get the latest version from `pypi <http://pypi.python.org/pypi/django-reporti
 
 
 How to use it
--------------
+=============
 
 Add to INSTALLED_APPS in an existing django project:
 
@@ -126,3 +127,17 @@ reports.py::
     reporting.register('people', PersonReport) # Do not forget to 'register' your class in reports
 
 For more details see a 'samples' projects inside the repository.
+
+
+More information
+================
+
+:Date: 11-05-2012
+:Version: 0.1
+:Authors:
+  - Rodrigo Herrera - Tryolabs <rodrigo@tryolabs.com>
+  - Vitaliy Kucheryaviy <vitaly@gmail.com> (Jan 2010)
+  - Marc Garcia <garcia.marc@gmail.com> (Apr 2009)
+
+:Website:
+  https://github.com/tryolabs/django-reporting
