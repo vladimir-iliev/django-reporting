@@ -1,16 +1,18 @@
 from django.contrib.admin.filterspecs import FilterSpec
+from django.contrib.admin.util import get_fields_from_path
 from django.db.models.fields.related import RelatedField
 from django.template.defaultfilters import capfirst
 
 
 class LookupFilterSpec(FilterSpec):
     def __init__(self, f, request, params, model, model_admin):
-        FilterSpec.__init__(self, f, request, params, model, model_admin)
+        field = get_fields_from_path(model, f)[-1]
+        FilterSpec.__init__(self, field, request, params, model, model_admin, field_path=f)
         self.model = model
         self.lookup_val = request.GET.get(f, None)
     
     def title(self):
-        return capfirst(' '.join([i for i in self.field.split('__')]))
+        return capfirst(' '.join([i for i in self.field_path.split('__')]))
 
     def choices(self, cl):
         yield {'selected': self.lookup_val is None,
@@ -24,8 +26,7 @@ class LookupFilterSpec(FilterSpec):
                    'display': display}
     
     def _values(self, model, lookup):
-        parts = lookup.split('__')
-        field = model._meta.get_field(parts[0])
+        field = lookup
         if not isinstance(field, RelatedField):
             raise Exception('Invalid lookup "%s"' % self.field)
         rel_model = field.rel.to

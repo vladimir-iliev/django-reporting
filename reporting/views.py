@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponse
+import json
 import reporting
 from datetime import date
 import csv
@@ -26,8 +27,8 @@ def view_report(request, slug):
     else:
         headers = report.get_headers()
     cant_of_group = len(headers) - len(report.aggregate)
-    data = {'report': report, 'title':report.verbose_name, 'for_csv':for_csv, 'range':range(cant_of_group),'cant_of_group':cant_of_group +1}
-    return render_to_response('reporting/view.html', data, 
+    #~ data = {'report': report, 'title':report.verbose_name, 'for_csv':for_csv, 'range':range(cant_of_group),'cant_of_group':cant_of_group +1}
+    return render_to_response(report.view_template, report.get_view_data(), 
                               context_instance=RequestContext(request))
     
 def get_csv(request,slug):
@@ -112,7 +113,10 @@ def see_plot(request,slug):
         y_index = header_tittles.index(request.GET.get('y_axis'))
         for row in report.results:
             new_row = []
-            new_row.append(str(row['values'][x_index]))
+            x_index_value = row['values'][x_index]
+            if isinstance(x_index_value, unicode):
+                x_index_value = x_index_value.encode('utf8', 'ignore')
+            new_row.append(x_index_value)
             if isinstance(row['values'][y_index],decimal.Decimal):
                 y_value = float(row['values'][y_index])
             else:
@@ -120,6 +124,6 @@ def see_plot(request,slug):
             new_row.append(y_value)
             data_to_plot.append(new_row)
         
-    data = {'report': report, 'title':report.verbose_name, 'for_csv':for_csv, 'slug':slug,'data_to_plot':data_to_plot,'type_of_plot':request.GET.get('type_of_plot')}
+    data = {'report': report, 'title':report.verbose_name, 'for_csv':for_csv, 'slug':slug,'data_to_plot':json.dumps(data_to_plot),'type_of_plot':request.GET.get('type_of_plot')}
     return render_to_response('reporting/plot.html', data, 
                               context_instance=RequestContext(request))

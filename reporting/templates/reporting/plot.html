@@ -25,7 +25,7 @@
     <script type="text/javascript">
 
 		$(document).ready(function(){
-		  var data = {{data_to_plot|safe}}; 
+		  var data = $.parseJSON('{{data_to_plot|safe}}'); 
 		  /*var data = [
 		    ['Heavy Industry', 12],['Retail', 9], ['Light Industry', 14], 
 		    ['Out of home', 16],['Commuting', 7], ['Orientation', 9]

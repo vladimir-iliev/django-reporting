@@ -1,3 +1,4 @@
+from django.contrib.admin.util import get_fields_from_path
 from django.contrib.admin.options import IncorrectLookupParameters
 from django.utils.http import urlencode
 from django.utils.encoding import smart_str
@@ -61,6 +62,7 @@ class Report(object):
     detail_list_display = None
     date_hierarchy = None
     aggregate = None
+    view_template = 'reporting/view.html'
     
     def __init__(self, request):
         self.request = request
@@ -89,17 +91,24 @@ class Report(object):
         self.query_set = self.get_queryset()
         self.get_aggregation()
         
+    def get_view_data(self):
+        return {'report': self, 'title': self.verbose_name}
     
     def get_results(self):
         qs = self.get_queryset()
         
         annotate_args = {}
+        extra_select = {}
+        values = [self.selected_group_by]
         for field, func in self.annotate:
-            annotate_args[field] = func(field)
+            if isinstance(func, basestring):
+                extra_select[field] = func
+                values.append(field)
+            else:
+                annotate_args[field] = func(field)
         
-        values = self.selected_group_by.split(',')
-        
-        #values = [self.selected_group_by]
+        if extra_select:
+            qs = qs.extra(select=extra_select)
         
         rows = qs.values(*values).annotate(**annotate_args).order_by(values[0])
         
@@ -171,22 +180,19 @@ class Report(object):
         return value
     
     def get_headers(self):
-        try:
-            count_cols = 0
-            more_than_one = self.selected_group_by.split(',')
-            for final_col in more_than_one:                    
-                if count_cols == 0:
-                    output = [Header(self, 0, self.get_lookup_title(final_col))]
-                else:
-                    output.append(Header(self, 0, self.get_lookup_title(final_col)))
-                count_cols = count_cols + 1
-            ind = 1
-            for title in self.annotate_titles:
-                output.append(Header(self, ind, title))
-                ind += 1
-            return output
-        except Exception,e:
-            raise e
+        count_cols = 0
+        more_than_one = self.selected_group_by.split(',')
+        for final_col in more_than_one:                    
+            if count_cols == 0:
+                output = [Header(self, 0, self.get_lookup_title(final_col))]
+            else:
+                output.append(Header(self, 0, self.get_lookup_title(final_col)))
+            count_cols = count_cols + 1
+        ind = 1
+        for title in self.annotate_titles:
+            output.append(Header(self, ind, title))
+            ind += 1
+        return output
     
     def header_count(self):
         return len(self.annotate) + 1#+1 group by
@@ -216,7 +222,7 @@ class Report(object):
         try:
             qs = qs.filter(**lookup_params)
         except:
-            raise IncorrectLookupParameters
+            raise IncorrectLookupParameters(lookup_params)
         return qs
         
 
@@ -226,11 +232,12 @@ class Report(object):
             #fields = []
             for field_name in self.list_filter:
                 try:
-                    field = self.get_field(field_name)
+                    field = get_fields_from_path(model_admin.model, field_name)[-1]
+                    #~ field = self.get_field(field_name)
                 except:
                     filter_specs.append(LookupFilterSpec(field_name, self.request, self.params, self.model, model_admin))
                     continue
-                spec = FilterSpec.create(field, self.request, self.params, self.model, model_admin)
+                spec = FilterSpec.create(field, self.request, self.params, self.model, model_admin, field_name)
                 if spec and spec.has_output():
                     filter_specs.append(spec)
         return filter_specs, bool(filter_specs)
