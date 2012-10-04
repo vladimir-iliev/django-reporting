@@ -3,6 +3,12 @@
 
 {% block extrastyle %}
   <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/changelists.css" />
+  <style type="text/css">
+	#changelist .report-list {
+		margin-right: 160px;
+	}
+  </style>
+
 {% endblock %}
 
 {% block extrahead %}
@@ -117,7 +123,7 @@
 		      
 		
 		      {% block result_list %}
-		      <div id="changelist" class="filtered">
+		      <div class="report-list">
 					<table>
 					{% if not report.show_details %}
 						<thead>
