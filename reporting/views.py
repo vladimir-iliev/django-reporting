@@ -27,8 +27,9 @@ def view_report(request, slug):
     else:
         headers = report.get_headers()
     cant_of_group = len(headers) - len(report.aggregate)
-    #~ data = {'report': report, 'title':report.verbose_name, 'for_csv':for_csv, 'range':range(cant_of_group),'cant_of_group':cant_of_group +1}
-    return render_to_response(report.view_template, report.get_view_data(), 
+    data = {'report': report, 'title':report.verbose_name, 'for_csv':for_csv, 'range':range(cant_of_group),'cant_of_group':cant_of_group +1}
+    data.update(report.get_view_data())
+    return render_to_response(report.view_template, data, 
                               context_instance=RequestContext(request))
     
 def get_csv(request,slug):

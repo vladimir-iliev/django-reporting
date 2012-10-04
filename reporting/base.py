@@ -219,6 +219,14 @@ class Report(object):
             # if key ends with __in, split parameter into separate values
             if key.endswith('__in'):
                 lookup_params[key] = value.split(',')
+        # add form cleaned values not in group_by
+        form = self.get_view_data().get('form')
+        if form and form.is_valid():
+            form_params = dict((k,v) for k,v in form.cleaned_data.items()
+                               if k not in self.group_by)
+        else:
+            form_params = {}
+        lookup_params.update(form_params)
         try:
             qs = qs.filter(**lookup_params)
         except:
